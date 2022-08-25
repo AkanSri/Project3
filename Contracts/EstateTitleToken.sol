@@ -8,13 +8,18 @@ contract EstateTitleToken is ERC721Full {
     constructor() public ERC721Full("EstateTitleToken", "ETT") {}
 
     struct EstateTitle {
-        string estateInfo; //Will be in format of estateMunicipality-estateBlock-estateLot
+        string estateMunicipality;
+        string estateBlock;
+        string estateLot;
         string mortgageBank; 
-        string titleJson;//Will hold hash for title on the IPFS
+        string titlehash;//Will hold hash for title on the IPFS
     }
 
     mapping(uint256 => EstateTitle) public estateTitles; //Collection of titles and their owner
     mapping(uint256 => address) public approvedRecievers;//approvedReciever 
+    
+    event RegisteredEstateInfo(uint256 indexed tokenId, string estateMunicipality, string estateBlock, string estateLot);
+
     //registerEstateTitle takes in all the parameters of the property, and the title  
     function registerEstateTitle(
         address payable owner,
@@ -28,9 +33,8 @@ contract EstateTitleToken is ERC721Full {
         require(msg.sender == countyClerk, "You are not authorized to Register Titles");
         uint256 tokenId = totalSupply();
         _mint(owner, tokenId);
-        
-        string memory estateInfo = string(abi.encodePacked(estateMunicipality,"-" ,estateBlock,"-" ,estateLot)); //formatting estate info
-        estateTitles[tokenId] = EstateTitle(estateInfo, mortgageBank, titleJson);
+        estateTitles[tokenId] = EstateTitle(estateMunicipality, estateBlock, estateLot, mortgageBank, titleJson);
+        emit RegisteredEstateInfo(tokenId, estateMunicipality, estateBlock, estateLot);
         return tokenId;
     }
 
@@ -49,4 +53,3 @@ contract EstateTitleToken is ERC721Full {
         approvedRecievers[tokenId] = recieverAddress;
     }
 }
-

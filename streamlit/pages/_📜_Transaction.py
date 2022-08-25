@@ -1,23 +1,13 @@
-
-
 import streamlit as st
 
 
-page_title = 'Search'
-st.markdown("# Register Property Record By Block and Lot")
+page_title = 'Send Transaction'
+
+id = st.text_input( "ID: ")
+
+if st.button("Process Transaction"):
+   st.write("result")
 
 
-
-st.text("\n")
-st.text("\n")
-st.markdown("## All Fields are Mandatory")
-
-
-option = st.selectbox('Municipality:', ('Choose One', 'Bergen', 'Essex', 'Hudson'))
-block = st.text_input( "Block: ")
-lot = st.text_input( "Lot: ")
-bank = st.text_input("Bank: ")
-
-   
-if st.button("Register"):
+if st.button("Approve Transfer"):
    st.write("result")
