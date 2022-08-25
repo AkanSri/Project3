@@ -4,13 +4,13 @@ from web3 import Web3
 from pathlib import Path
 from dotenv import load_dotenv
 import streamlit as st
-
-from pinata import pin_file_to_ipfs, pin_json_to_ipfs, convert_data_to_json
+from pinata import *
 
 load_dotenv()
 
 # Define and connect a new Web3 provider
 w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
+# st.write(transfers_reports[len(transfers_reports)-1]['args']['to'])
 
 ################################################################################
 # Load_Contract Function
@@ -40,8 +40,8 @@ def load_contract():
 
 # Load the contract
 contract = load_contract()
-accounts = w3.eth.accounts
-address = st.selectbox("Select Your Account", options=accounts)
+
+clerk_address = get_clerk_address()
 
 ################################################################################
 # Helper functions to pin files and json to Pinata
@@ -63,7 +63,7 @@ def pin_title(title_name, title_file):
     json_ipfs_hash = pin_json_to_ipfs(json_data)
 
     return json_ipfs_hash, token_json
-titleNumber = 0
+
 
 page_title = 'Search'
 st.markdown("# Register Property Record By Block and Lot")
@@ -74,12 +74,12 @@ municipality = st.selectbox("Municipality:", ('Bergen', 'Essex', 'Hudson', 'Bord
 block = st.text_input("Block: ")
 lot = st.text_input("Lot: ")
 bank = st.text_input("Bank: ")
-owner = st.selectbox("Select owner of estate", options=accounts)
+owner = st.selectbox("Select owner of estate", options= get_accounts())
 tokenId = st.text_input("Enter the token id (leave blank if registering estate)")
 
 file = st.file_uploader("Upload Title", type=["pdf","doc","docx"])
-title_name = f"title{str(titleNumber)}"
-titleNumber += 1
+title_name = "title"
+
 if (file):
    title_ipfs_hash, token_json = pin_title(title_name, file)
    st.markdown(f"[{title_name} IPFS Link](https://ipfs.io/ipfs/{token_json['title_hash']})")
@@ -94,19 +94,20 @@ if st.button("Register Estate"):
     block,
     lot,
     bank,
-    title_ipfs_hash).transact({'from': address, 'gas': 1000000})
+    title_ipfs_hash).transact({'from': clerk_address, 'gas': 1000000})
     receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     st.write("Transaction receipt mined:")
     st.write(dict(receipt))
     #st.write(f"Token {token_id} created")
 
 if st.button("Search"): 
-    if (tokenId):
-        transfer_filter = contract.events.Transfer.createFilter(
-            fromBlock=0, argument_filters={"tokenId": int(tokenId)})
-        transfers_reports = transfer_filter.get_all_entries()
-        st.write(transfers_reports)
-    else:
+   if (tokenId):
+      transfer_filter = contract.events.Transfer.createFilter(
+         fromBlock=0, argument_filters={"tokenId": int(tokenId)})
+      transfers_reports = transfer_filter.get_all_entries()
+      st.write(transfers_reports)
+        
+   else:
         filters = {}    
         if(municipality):
             filters.update({"estateMunicipality": municipality})
