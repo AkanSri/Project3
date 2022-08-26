@@ -3,8 +3,9 @@ import json
 import requests
 from dotenv import load_dotenv
 from web3 import Web3
-
+import streamlit as st
 load_dotenv()
+
 # Define and connect a new Web3 provider
 w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
 accounts = w3.eth.accounts
@@ -12,7 +13,7 @@ accounts = w3.eth.accounts
 def get_clerk_address():
     return (accounts[0])
 def get_accounts():
-    return (accounts)
+    return (list(accounts))
     
 json_headers = {
     "Content-Type": "application/json",
