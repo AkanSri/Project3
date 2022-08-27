@@ -5,7 +5,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 import streamlit as st
 from pinata import *
-
+import pandas as pd
+import numpy as np
+from geopy.geocoders import Nominatim
+#making an instance of Nominatim class
+geolocator = Nominatim(user_agent="my_request")
 load_dotenv()
 
 # Define and connect a new Web3 provider
@@ -57,7 +61,7 @@ def pin_title(title_name, title_file):
 
 # Search page format header
 page_title = 'Search'
-st.write(f"Welcome: {st.session_state.user}")
+st.write(f"Welcome: {st.session_state.user_name}")
 st.markdown(f"# 📖 Search")
 st.markdown("## Register/Search Property Record By Block and Lot")
 
@@ -69,15 +73,24 @@ if 'municipalities' not in st.session_state:
 if(clerk_address == st.session_state.user):
     new_municipality = st.text_input("New Municipality: ")    
     if st.button("Add new Municipality"):
-        st.session_state.municipalities.append(new_municipality)
+        if (new_municipality): 
+            st.session_state.municipalities.append(new_municipality)
+accounts_dict = get_accounts()
 
 # Get Estate Registration/Search Info
 municipality = st.selectbox("Municipality:", st.session_state.municipalities)
 block = st.text_input("Block: ")
 lot = st.text_input("Lot: ")
 bank = st.text_input("Bank: ")
-owner = st.selectbox("Select owner of estate", options= get_accounts())
+owner = st.selectbox("Select owner of estate", options= accounts_dict.keys())
+owner = accounts_dict[owner]
 tokenId = st.text_input("Enter the token id (leave blank if registering estate)")
+loc = st.text_input("Address: ")
+if (loc):
+    location = geolocator.geocode(loc)
+    df = pd.DataFrame({'latitude': [location.latitude], 'longitude':[location.longitude]})
+    #plotting a map with the above defined points
+    st.map(df)
 file = st.file_uploader("Upload Title", type=["pdf","doc","docx"])
 title_name = "title"
 
@@ -94,6 +107,7 @@ if(clerk_address == st.session_state.user):
         municipality,
         block,
         lot,
+        loc,
         bank,
         title_ipfs_hash).transact({'from': clerk_address, 'gas': 1000000})
         receipt = w3.eth.waitForTransactionReceipt(tx_hash)

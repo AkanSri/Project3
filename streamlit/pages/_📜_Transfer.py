@@ -37,14 +37,14 @@ def load_contract():
 contract = load_contract()
 
 # Get all the accounts 
-accounts = get_accounts()
+accounts_dict = get_accounts()
 
 # Remove logged in user from account list
-accounts.remove(st.session_state.user)
+del accounts_dict[st.session_state.user_name]
 
 # Transaction page format header
 page_title = 'Transfer Estate'
-st.write(f"Welcome: {st.session_state.user}")
+st.write(f"Welcome: {st.session_state.user_name}")
 st.markdown(f"# 📜 Transfer")
 st.markdown("## Approve Transfer of your Estate")
 
@@ -59,7 +59,8 @@ for t in range(contract.functions.totalSupply().call()):
 
 # Get fields for approving transfers
 token_id = st.selectbox( "Token Id: ", options=tokens)
-to_address = st.selectbox("Select Reciever Account", options=accounts)
+to_address = st.selectbox("Select Reciever Account", options=accounts_dict.keys())
+to_address = accounts_dict[to_address]
 
 # Set transfers as session state variable 
 if 'transfers' not in st.session_state:

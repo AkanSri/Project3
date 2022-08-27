@@ -12,8 +12,23 @@ accounts = w3.eth.accounts
 
 def get_clerk_address():
     return (accounts[0])
+
 def get_accounts():
-    return (list(accounts))
+    if (len(list(accounts))== 5):
+        account_name =  {
+            "Dan" : accounts[0],
+            "Akanksha" : accounts[1],
+            "Wadeeha" : accounts[2],
+            "Ranny" : accounts[3],
+            "Hakob" : accounts[4],
+            }
+        return (account_name)
+    else:
+        account_name = {}
+        userNumber = 0
+        for a in accounts:
+            account_name = {a: f"User{userNumber}"}
+        return (account_name)
     
 json_headers = {
     "Content-Type": "application/json",
