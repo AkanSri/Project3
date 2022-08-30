@@ -5,12 +5,13 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v2.5
 contract EstateTitleToken is ERC721Full {
     address countyClerk = msg.sender; //County Clerk deploys contract
     
-    constructor() public ERC721Full("EstateTitleToken", "ETT") {}
+    constructor() public ERC721Full("RutgersProject3Token", "RP3") {}
 
     struct EstateTitle {
         string estateMunicipality;
         string estateBlock;
         string estateLot;
+        string real_address;
         string mortgageBank; 
         string titlehash;//Will hold hash for title on the IPFS
     }
@@ -18,7 +19,7 @@ contract EstateTitleToken is ERC721Full {
     mapping(uint256 => EstateTitle) public estateTitles; //Collection of titles and their owner
     mapping(uint256 => address) public approvedRecievers;//approvedReciever 
     
-    event RegisteredEstateInfo(uint256 indexed tokenId, string estateMunicipality, string estateBlock, string estateLot);
+    event RegisteredEstateInfo(uint256 indexed tokenId, string estateMunicipality, string estateBlock, string estateLot, string indexed real_address);
 
     //registerEstateTitle takes in all the parameters of the property, and the title  
     function registerEstateTitle(
@@ -26,6 +27,7 @@ contract EstateTitleToken is ERC721Full {
         string memory estateMunicipality,
         string memory estateBlock,
         string memory estateLot,
+        string memory real_address,
         string memory mortgageBank,
         string memory titleJson
     ) public returns (uint256) {
@@ -33,8 +35,8 @@ contract EstateTitleToken is ERC721Full {
         require(msg.sender == countyClerk, "You are not authorized to Register Titles");
         uint256 tokenId = totalSupply();
         _mint(owner, tokenId);
-        estateTitles[tokenId] = EstateTitle(estateMunicipality, estateBlock, estateLot, mortgageBank, titleJson);
-        emit RegisteredEstateInfo(tokenId, estateMunicipality, estateBlock, estateLot);
+        estateTitles[tokenId] = EstateTitle(estateMunicipality, estateBlock, estateLot, real_address, mortgageBank, titleJson);
+        emit RegisteredEstateInfo(tokenId, estateMunicipality, estateBlock, estateLot, real_address);
         return tokenId;
     }
 
