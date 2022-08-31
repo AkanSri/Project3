@@ -87,7 +87,21 @@ if st.button("Search"):
        transfer_filter = contract.events.Transfer.createFilter(
            fromBlock=0, argument_filters={"tokenId": int(tokenId)})
        transfers_reports = transfer_filter.get_all_entries()
-       st.write(transfers_reports)    
+       report_dict = {}
+       index = 0
+       for report in transfers_reports:
+           args = dict(report["args"])
+           ato = [acc for acc in accounts_dict if accounts_dict[acc] == args["to"]]
+           if len(ato)>0:
+               args["to"] = ato[0]
+           afrom = [acc for acc in accounts_dict if accounts_dict[acc] == args["from"]]
+           if len(afrom)>0:
+               args["from"] = afrom[0]
+           
+           report_dict[index] = args
+           index += 1
+       df = pd.DataFrame(report_dict.values(), index = report_dict.keys())
+       st.write(df)
    else:
        # Create filter by populated fields
         filters = {}  
@@ -104,4 +118,10 @@ if st.button("Search"):
             fromBlock=0, argument_filters= filters 
         )
         estate_info_reports = estate_info_filter.get_all_entries()
-        st.write(estate_info_reports)   
+
+        d = [contract.functions.estateTitles(r["args"]["tokenId"]).call() for r in estate_info_reports]
+        df = pd.DataFrame(d, columns = ['Municipality', 'Block', 'Lot', 'Address', 'Bank', 'Title IPFS Hash'])
+        df = df.drop(columns=["Title IPFS Hash"])
+        st.write(df)
+             
+             
