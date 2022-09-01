@@ -107,5 +107,5 @@ if(clerk_address == st.session_state.user):
         token = int((receipt["logs"][0]["topics"][3]).hex(),16)
         temp = list(accounts_dict.items()) 
         res = [idx for idx, key in temp if key == contract.functions.ownerOf(token).call()]
-        st.success(f"Token {str(token)} has been transferred to {res}")
+        st.success(f"Token {str(token)} has been transferred to {res[0]}")
         

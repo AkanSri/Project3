@@ -1,9 +1,10 @@
 import streamlit as st
 from pinata import *
 
+
 # Save user as session state variable 
 if 'user' not in st.session_state:
-    st.session_state.user = 'INVALID'
+    st.session_state.user = 'INVALID'  
 
 # Home page format header
 page_title = '_🏠_Home'
