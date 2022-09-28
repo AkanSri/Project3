@@ -22,12 +22,23 @@ We created an app using Streamlit to visualize the smart contract functions. Thi
 #### Home:
 This page has the Login screen that makes sure only certain people have access to certain information. For now, the login process is simplfied so the password is equal to the username. We implemented session state variables that are accessible on all pages, and dont get reset everytime the screen is refreshed. 
 
+![HomePage.png](Screenshots/HomePage.png)
+
 #### List:
 This tab lists all your tokens and the information about each token. If the clerk is logged in, all the tokens will be listed.
+
+<img src="Screenshots/ListClerk.png" width="525"/> 
+<img src="Screenshots/ListUser.png" width="525"/> 
+
 
 #### Search:
 If clerk is logged in, they can register new tokens on this page by inputting all the data and uploading the title to the IPFS. This tab also has the search functionality which can filter by any information inputted and also search by the token id. If the token id is populated, you can see the transfer history of that token.
 
+<img src="Screenshots/SearchClerk1.png" width="525"/> 
+<img src="Screenshots/SearchClerk2.png" width="525"/> 
+
 #### Transfer:
 On this tab, the user can see the tokens they own and approve their tokens for transfer to a reciever. If the clerk is logged in, they can see the token ids pending transfers, choose the token and process the transfer. 
 
+<img src="Screenshots/TransferClerk.png" width="525"/> 
+<img src="Screenshots/TransferUser.png" width="525"/> 
